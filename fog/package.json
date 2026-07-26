@@ -1,0 +1,13 @@
+{
+  "name": "fpv-fog",
+  "version": "1.0.0",
+  "private": true,
+  "main": "app.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "@aws-sdk/client-sqs": "^3.699.0"
+  }
+}

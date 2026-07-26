@@ -1,0 +1,29 @@
+# node
+node_modules/
+npm-debug.log*
+
+# build artifacts
+*.zip
+function.zip
+lambda.zip
+
+# terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+terraform.tfstate.d/
+crash.log
+
+# credentials -- never commit
+.env
+*.pem
+
+# python (infra scripts)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# os
+.DS_Store

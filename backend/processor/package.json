@@ -1,0 +1,13 @@
+{
+  "name": "patient-vitals-processor",
+  "version": "1.0.0",
+  "private": true,
+  "main": "handler.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.699.0",
+    "@aws-sdk/lib-dynamodb": "^3.699.0"
+  }
+}

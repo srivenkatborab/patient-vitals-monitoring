@@ -1,0 +1,155 @@
+name: fpv
+
+x-aws-env: &aws-env
+  AWS_ENDPOINT_URL: http://localstack:4566
+  AWS_REGION: eu-west-1
+  AWS_ACCESS_KEY_ID: test
+  AWS_SECRET_ACCESS_KEY: test
+
+x-sensor: &sensor
+  build:
+    context: ../sensors
+  environment: &sensor-env
+    FOG_URL: http://fog:8000/ingest
+  depends_on:
+    - fog
+  restart: unless-stopped
+
+services:
+  localstack:
+    image: localstack/localstack:3.8
+    ports:
+      - "4568:4566"
+    environment:
+      SERVICES: sqs,dynamodb,lambda
+      DEBUG: "0"
+      LAMBDA_KEEPALIVE_MS: "0"
+    volumes:
+      - ./localstack/init.sh:/etc/localstack/init/ready.d/init.sh
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  fog:
+    build:
+      context: ../fog
+    environment:
+      <<: *aws-env
+      WINDOW_SECONDS: "10"
+      SQS_QUEUE_NAME: fpv-vitals-agg
+    depends_on:
+      - localstack
+    restart: unless-stopped
+
+  # one-shot: deploys handler.js as a real Lambda wired to the SQS queue
+  processor:
+    build:
+      context: ../backend/processor
+    environment:
+      <<: *aws-env
+      SQS_QUEUE_NAME: fpv-vitals-agg
+      TABLE_NAME: fpv-readings
+    depends_on:
+      - localstack
+    restart: "no"
+
+  dashboard:
+    build:
+      context: ../backend/dashboard
+    ports:
+      - "8082:8000"
+    environment:
+      <<: *aws-env
+      TABLE_NAME: fpv-readings
+      SQS_QUEUE_NAME: fpv-vitals-agg
+    depends_on:
+      - localstack
+    restart: unless-stopped
+
+  sensor-hr-p1:
+    <<: *sensor
+    environment:
+      <<: *sensor-env
+      SENSOR_TYPE: heart_rate
+      SITE_ID: patient-1
+      SAMPLE_INTERVAL: "2"
+      DISPATCH_INTERVAL: "8"
+
+  sensor-hr-p2:
+    <<: *sensor
+    environment:
+      <<: *sensor-env
+      SENSOR_TYPE: heart_rate
+      SITE_ID: patient-2
+      SAMPLE_INTERVAL: "2"
+      DISPATCH_INTERVAL: "9"
+
+  sensor-spo2-p1:
+    <<: *sensor
+    environment:
+      <<: *sensor-env
+      SENSOR_TYPE: spo2
+      SITE_ID: patient-1
+      SAMPLE_INTERVAL: "3"
+      DISPATCH_INTERVAL: "10"
+
+  sensor-spo2-p2:
+    <<: *sensor
+    environment:
+      <<: *sensor-env
+      SENSOR_TYPE: spo2
+      SITE_ID: patient-2
+      SAMPLE_INTERVAL: "3"
+      DISPATCH_INTERVAL: "11"
+
+  sensor-temp-p1:
+    <<: *sensor
+    environment:
+      <<: *sensor-env
+      SENSOR_TYPE: body_temperature
+      SITE_ID: patient-1
+      SAMPLE_INTERVAL: "4"
+      DISPATCH_INTERVAL: "12"
+
+  sensor-temp-p2:
+    <<: *sensor
+    environment:
+      <<: *sensor-env
+      SENSOR_TYPE: body_temperature
+      SITE_ID: patient-2
+      SAMPLE_INTERVAL: "4"
+      DISPATCH_INTERVAL: "13"
+
+  sensor-resp-p1:
+    <<: *sensor
+    environment:
+      <<: *sensor-env
+      SENSOR_TYPE: respiration_rate
+      SITE_ID: patient-1
+      SAMPLE_INTERVAL: "3"
+      DISPATCH_INTERVAL: "10"
+
+  sensor-resp-p2:
+    <<: *sensor
+    environment:
+      <<: *sensor-env
+      SENSOR_TYPE: respiration_rate
+      SITE_ID: patient-2
+      SAMPLE_INTERVAL: "3"
+      DISPATCH_INTERVAL: "11"
+
+  sensor-bp-p1:
+    <<: *sensor
+    environment:
+      <<: *sensor-env
+      SENSOR_TYPE: systolic_bp
+      SITE_ID: patient-1
+      SAMPLE_INTERVAL: "5"
+      DISPATCH_INTERVAL: "15"
+
+  sensor-bp-p2:
+    <<: *sensor
+    environment:
+      <<: *sensor-env
+      SENSOR_TYPE: systolic_bp
+      SITE_ID: patient-2
+      SAMPLE_INTERVAL: "5"
+      DISPATCH_INTERVAL: "16"

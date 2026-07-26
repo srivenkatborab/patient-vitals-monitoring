@@ -1,0 +1,9 @@
+{
+  "name": "fpv-sensor",
+  "version": "1.0.0",
+  "private": true,
+  "main": "sensor.js",
+  "scripts": {
+    "test": "node --test"
+  }
+}

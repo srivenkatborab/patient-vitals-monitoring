@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Patient Vitals Monitor</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/vendor/chart.umd.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Patient Vitals Monitor</h1>
+    <div id="ward-summary" class="ward-summary"></div>
+  </header>
+
+  <section id="critical-banner" class="critical-banner"></section>
+
+  <main id="patient-list" class="patient-list"></main>
+
+  <section id="gateway-status" class="gateway-status"></section>
+
+  <script id="app" src="/static/dashboard.js" data-api-base="__API_BASE__"></script>
+</body>
+</html>

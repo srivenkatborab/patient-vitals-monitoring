@@ -1,0 +1,16 @@
+{
+  "name": "patient-vitals-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "@aws-sdk/client-dynamodb": "^3.699.0",
+    "@aws-sdk/lib-dynamodb": "^3.699.0",
+    "@aws-sdk/client-sqs": "^3.699.0",
+    "@aws-sdk/client-lambda": "^3.699.0"
+  }
+}
